@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Url Shrink</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <h1>Url Shrink</h1>
+
+    <form method="POST" action="/" target="myFormResponse">
+      <input
+        type="text"
+        id="urlname"
+        name="urlname"
+        placeholder="Paste or type url here..."
+      />
+      <input type="submit" value="Shrink" />
+    </form>
+    <div>
+      <iframe name="myFormResponse"></iframe>
+    </div>
+  </body>
+</html>

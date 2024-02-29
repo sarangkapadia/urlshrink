@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const shortid = require('shortid');
-
+const urlreg = require('./helpers');
 // Mongo
 const mongoose = require('mongoose');
 const urlModel = require('./models/schema.js');
@@ -37,7 +37,6 @@ app.get("/", (req, res) => {
 
 // GET /:id
 app.get("/:id", (req, res) => {
-    console.log("in /:id =", req.params.id);
     const entry = urlModel.findOne().exists(`urlPairs.${req.params.id}`)
         .then(result => {
             const value = result.urlPairs.get(req.params.id);
@@ -52,10 +51,15 @@ app.get("/:id", (req, res) => {
 // POST /
 app.post("/", (req, res) => {
     const input = req.body;
-    if (URL.canParse(input.urlname)) {
+    if (urlreg.test(input.urlname)) {
         const entry = new urlModel({ urlPairs: {} });
         const hash = shortid.generate();
+
+        if (!input.urlname.startsWith('http'))
+            input.urlname = `http://${input.urlname}`;
+
         console.log(input.urlname, hash);
+
         entry.urlPairs.set(hash, input.urlname);
         entry.save()
             .then((result) => {

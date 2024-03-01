@@ -7,9 +7,10 @@ const mongoose = require('mongoose');
 const urlModel = require('./models/schema.js');
 const databaseName = 'UrlDB' //from monogoDB
 const uri = `mongodb+srv://sarangksk:sarmongodb83@cluster0.oqf6arl.mongodb.net/${databaseName}?retryWrites=true&w=majority&appName=Cluster0`;
+const port = process.env.PORT || 3000;
 
 mongoose.connect(uri)
-    .then(result => app.listen(3000))
+    .then(result => app.listen(port))
     .catch(err => console.log(err));
 
 
@@ -63,8 +64,9 @@ app.post("/", (req, res) => {
         entry.urlPairs.set(hash, input.urlname);
         entry.save()
             .then((result) => {
+                const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
                 res.render('result', {
-                    short_url: `http://localhost:3000/${hash}`, advice
+                    short_url: `${fullUrl}${hash}`, advice
                 });
             })
             .catch(err => {

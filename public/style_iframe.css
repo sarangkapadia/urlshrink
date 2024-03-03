@@ -3,16 +3,18 @@ a {
   text-align: center;
   margin-top: 20px;
   text-decoration: none;
-  color: #007bff;
+  color: #fafafc;
   font-size: large;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 p {
   text-align: center;
-  color: #0056b3;
+  color: #fafafc;
 }
 
 div {
   display: flex;
   flex-direction: column;
+  font-family: Helvetica, Arial, sans-serif;
 }

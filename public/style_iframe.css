@@ -6,6 +6,7 @@ a {
   color: #fafafc;
   font-size: large;
   font-family: Helvetica, Arial, sans-serif;
+  text-decoration: underline;
 }
 
 p {

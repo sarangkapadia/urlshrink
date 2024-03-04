@@ -80,3 +80,24 @@ app.post("/", (req, res) => {
     populateAdvice();
 });
 
+app.delete("/:id", (req, res) => {
+    const entry = urlModel.deleteOne().exists(`urlPairs.${req.params.id}`)
+        .then(result => {
+            console.log(result);
+            res.status(200).send();
+        }).catch(err => {
+            console.log(err);
+            res.status(400).render('404');
+        });
+})
+
+// app.delete("/all", (req, res) => {
+//     const entry = urlModel.deleteMany().exists(`urlPairs.${}`)
+//         .then(result => {
+//             console.log(result);
+//             res.status(200).send();
+//         }).catch(err => {
+//             console.log(err);
+//             res.status(400).render('404');
+//         });
+// })

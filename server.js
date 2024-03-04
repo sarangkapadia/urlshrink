@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const shortid = require('shortid');
 const urlreg = require('./helpers');
+const redis = require('redis');
+
 // Mongo
 const mongoose = require('mongoose');
 const urlModel = require('./models/schema.js');
@@ -12,6 +14,23 @@ const port = process.env.PORT || 3000;
 mongoose.connect(uri)
     .then(result => app.listen(port))
     .catch(err => console.log(err));
+
+const redisClient = redis.createClient({
+    password: 'xZNWvUWxSbTswJnpfrfps08t4fC9apv8',
+    socket: {
+        host: 'redis-12500.c331.us-west1-1.gce.cloud.redislabs.com',
+        port: 12500
+    }
+});
+
+redisClient.on('error', err => console.log('Redis Client Error', err));
+
+redisClient.connect().
+    then((data) => {
+        console.log("redisClient connected");
+    }).catch((err) => {
+        console.log("Failure connecting redis client", err);
+    });
 
 
 // Middleware
@@ -37,7 +56,20 @@ app.get("/", (req, res) => {
 });
 
 // GET /:id
-app.get("/:id", (req, res) => {
+app.get("/:id", async (req, res) => {
+    try {
+        const value = await redisClient.get(req.params.id);
+        if (value) {
+            console.log("cache hit! - redirecting to ", value);
+            res.redirect(value);
+            return; // this is important to prevent db read
+        } else {
+            console.log('cache miss, trying db');
+        }
+    } catch (err) {
+        console.log("error fetching from redis", err);
+    }
+
     const entry = urlModel.findOne().exists(`urlPairs.${req.params.id}`)
         .then(result => {
             const value = result.urlPairs.get(req.params.id);
@@ -50,7 +82,7 @@ app.get("/:id", (req, res) => {
 });
 
 // POST /
-app.post("/", (req, res) => {
+app.post("/", async (req, res) => {
     const input = req.body;
     if (urlreg.test(input.urlname)) {
         const entry = new urlModel({ urlPairs: {} });
@@ -60,7 +92,13 @@ app.post("/", (req, res) => {
             input.urlname = `http://${input.urlname}`;
 
         console.log(input.urlname, hash);
-
+        // write to redis cache first
+        try {
+            await redisClient.set(hash, input.urlname);
+        } catch (err) {
+            console.log("error writing to cache", err);
+        }
+        // write to db after
         entry.urlPairs.set(hash, input.urlname);
         entry.save()
             .then((result) => {

@@ -129,6 +129,10 @@ app.delete("/:id", (req, res) => {
         });
 })
 
+app.use((req, res) => {
+    res.status(400).render('404');
+})
+
 // app.delete("/all", (req, res) => {
 //     const entry = urlModel.deleteMany().exists(`urlPairs.${}`)
 //         .then(result => {

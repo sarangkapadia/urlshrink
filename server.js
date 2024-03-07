@@ -71,10 +71,17 @@ app.get("/:id", async (req, res) => {
     }
 
     const entry = urlModel.findOne().exists(`urlPairs.${req.params.id}`)
-        .then(result => {
+        .then(async (result) => {
             const value = result.urlPairs.get(req.params.id);
             console.log("redirecting to ", value);
             res.redirect(value);
+            // cache aside writing
+            try {
+                console.log(`writing ${req.params.id} to cache`);
+                await redisClient.set(req.params.id, value);
+            } catch (err) {
+                console.log("Error writing to cache", err);
+            }
         }).catch(err => {
             console.log(err);
             res.status(400).render('404');

@@ -1,6 +1,6 @@
-Url Shrink is a url shortner, that also offers random advice, like a shrink would ( take it lightly )
+# URL Shrink
 
-# URL Shortener
+Url Shrink is a url shortner, that also offers random advice, like a shrink would ( take it lightly )
 
 The application is built with Node.js, Express, MongoDB, and Redis.
 
@@ -13,7 +13,7 @@ The application is built with Node.js, Express, MongoDB, and Redis.
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your_username/url-shortener.git`
+1. Clone the repository
 2. Install dependencies: `npm install`
 3. Set up MongoDB and Redis servers.
 4. Create a `.env` file with the following variables:

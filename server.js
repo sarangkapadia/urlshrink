@@ -61,7 +61,7 @@ app.get("/:id", async (req, res) => {
         const value = await redisClient.get(req.params.id);
         if (value) {
             console.log("cache hit! - redirecting to ", value);
-            res.redirect(value);
+            res.redirect(301, value);
             return; // this is important to prevent db read
         } else {
             console.log('cache miss, trying db');
@@ -74,7 +74,7 @@ app.get("/:id", async (req, res) => {
         .then(async (result) => {
             const value = result.urlPairs.get(req.params.id);
             console.log("redirecting to ", value);
-            res.redirect(value);
+            res.redirect(301, value);
             // cache aside writing
             try {
                 console.log(`writing ${req.params.id} to cache`);
